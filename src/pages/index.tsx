@@ -3,6 +3,10 @@ import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const getServerSideProps = async () => {
+  return { props: {} };
+};
+
 export default function Home() {
   return (
     <main
