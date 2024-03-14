@@ -4,26 +4,56 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const getServerSideProps = async () => {
-  return { props: { apps: ["a", "b"] } };
+  const notionToken = process.env.NOTION_TOKEN;
+  const notionVersion = "2022-06-28";
+
+  const apps = await fetch(
+    `https://api.notion.com/v1/databases/${process.env.NOTION_DATABASE_ID}/query`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + notionToken,
+        "Notion-Version": notionVersion,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sorts: [
+          {
+            property: "name",
+            direction: "ascending",
+          },
+        ],
+      }),
+    }
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then(async (data) => {
+      return data.results.map((app) => ({
+        name: app.properties.name.title[0].text.content as string,
+        link: app.properties.link.rich_text[0].plain_text as string,
+        description: app.properties.description.rich_text[0]
+          .plain_text as string,
+      })) as PomodoroApp[];
+    })
+    .catch((error) => {
+      console.error("There was a problem with your fetch operation:", error);
+    });
+
+  return { props: { apps } };
 };
 
 export default function Home({ apps = [] }) {
+  console.log(apps);
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
     >
-      <div>
-        {apps.map((app) => (
-          <div
-            key={app}
-            className="bg-white dark:bg-black/30 p-4 rounded-lg shadow-lg"
-          >
-            <h1 className="text-3xl font-bold">Hello World {app}</h1>
-            <p className="text-lg">This is a test</p>
-          </div>
-        ))}
-      </div>
-
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
         <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
           Get started by editing&nbsp;
