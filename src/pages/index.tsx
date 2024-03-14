@@ -46,8 +46,6 @@ export const getServerSideProps = async () => {
 };
 
 export default function Home({ apps = [] }) {
-  console.log(apps);
-
   return (
     <main className="relative flex min-h-screen flex-col items-center bg-black p-4 text-white bg-dot-white/[0.2]">
       <div className="max-w-5xl">
