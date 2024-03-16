@@ -1,17 +1,17 @@
-import { HoverEffect } from "@/components/ui/card-hover-effect";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
+import { HoverEffect } from "@/components/ui/card-hover-effect"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import Link from "next/link"
 
 type PomodoroApp = {
-  name: string;
-  link: string;
-  description: string;
-};
+  name: string
+  link: string
+  description: string
+}
 
 export const getServerSideProps = async () => {
-  const notionToken = process.env.NOTION_TOKEN;
-  const notionVersion = "2022-06-28";
+  const notionToken = process.env.NOTION_TOKEN
+  const notionVersion = "2022-06-28"
 
   const apps = await fetch(
     `https://api.notion.com/v1/databases/${process.env.NOTION_DATABASE_ID}/query`,
@@ -30,13 +30,13 @@ export const getServerSideProps = async () => {
           },
         ],
       }),
-    }
+    },
   )
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error("Network response was not ok")
       }
-      return response.json();
+      return response.json()
     })
     .then(async (data) => {
       return data.results.map((app) => ({
@@ -44,14 +44,14 @@ export const getServerSideProps = async () => {
         link: app.properties.link.rich_text[0].plain_text as string,
         description: app.properties.description.rich_text[0]
           .plain_text as string,
-      })) as PomodoroApp[];
+      })) as PomodoroApp[]
     })
     .catch((error) => {
-      console.error("There was a problem with your fetch operation:", error);
-    });
+      console.error("There was a problem with your fetch operation:", error)
+    })
 
-  return { props: { apps } };
-};
+  return { props: { apps } }
+}
 
 export default function Home({ apps = [] }) {
   return (
@@ -78,9 +78,9 @@ export default function Home({ apps = [] }) {
         </footer>
       </div>
 
-      <div className="bg-neutral-900 container flex items-center justify-center p-12">
+      <div className="container flex items-center justify-center bg-neutral-900 p-12">
         <form action="" method="post">
-          <div className="flex-col flex gap-4">
+          <div className="flex flex-col gap-4">
             <div className="flex gap-4">
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="email">
@@ -109,5 +109,5 @@ export default function Home({ apps = [] }) {
         </form>
       </div>
     </main>
-  );
+  )
 }
