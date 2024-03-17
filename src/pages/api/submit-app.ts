@@ -5,8 +5,7 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const data = JSON.parse(req.body)
-
-  console.log(data)
+  let status: number
 
   await fetch("https://api.notion.com/v1/pages", {
     method: "POST",
@@ -24,8 +23,14 @@ export default async function handler(
       },
     }),
   })
-    .then((response) => console.log("Success:", response))
-    .catch((error) => console.error("Error:", error))
+    .then((response) => {
+      status = response.status
+      console.log("Success:", response)
+    })
+    .catch((error) => {
+      status = 500
+      console.error("Error:", error)
+    })
 
-  res.status(200)
+  res.status(status!).json({})
 }

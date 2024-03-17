@@ -1,7 +1,10 @@
+import { Button } from "@/components/ui/button"
 import { HoverEffect } from "@/components/ui/card-hover-effect"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { ReloadIcon } from "@radix-ui/react-icons"
 import Link from "next/link"
+import { useState } from "react"
 
 type PomodoroApp = {
   name: string
@@ -54,13 +57,32 @@ export const getServerSideProps = async () => {
 }
 
 export default function Home({ apps = [] }) {
+  const [email, setEmail] = useState("")
+  const [twitter, setTwitter] = useState("")
+  const [link, setLink] = useState("")
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showVisualFeedback, setShowVisualFeedback] = useState(false)
+
   async function handleSubmitApp(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setIsSubmitting(true)
 
     const formData = new FormData(event.currentTarget)
     await fetch("/api/submit-app", {
       method: "POST",
       body: JSON.stringify(Object.fromEntries(formData.entries())),
+    }).then((res) => {
+      if (res.ok) {
+        setIsSubmitting(false)
+        setShowVisualFeedback(true)
+        setTimeout(() => {
+          setShowVisualFeedback(false)
+          setEmail("")
+          setTwitter("")
+          setLink("")
+        }, 3000)
+      }
     })
   }
 
@@ -88,7 +110,7 @@ export default function Home({ apps = [] }) {
         </footer>
       </div>
 
-      <div className="container flex justify-center bg-neutral-950 p-12">
+      <div className="flex w-full justify-center bg-neutral-950 p-12">
         <div className="max-w-1/3 flex flex-col gap-6">
           <div className="m-auto flex w-3/4 flex-col justify-center gap-4 text-center">
             <h2 className="text-2xl font-bold md:text-3xl">
@@ -105,16 +127,21 @@ export default function Home({ apps = [] }) {
                     <span className="text-red-600">*</span> Your email
                   </Label>
                   <Input
+                    onChange={(event) => setEmail(event.target.value)}
+                    value={email}
                     type="email"
                     name="email"
                     id="email"
                     placeholder="john@doe.io"
+                    required
                   />
                 </div>
 
                 <div className="items-center gap-1.5">
                   <Label htmlFor="twitter">Your twitter</Label>
                   <Input
+                    onChange={(event) => setTwitter(event.target.value)}
+                    value={twitter}
                     type="text"
                     id="twitter"
                     name="twitter"
@@ -128,19 +155,30 @@ export default function Home({ apps = [] }) {
                   <span className="text-red-600">*</span> Project URL
                 </Label>
                 <Input
-                  type="text"
+                  onChange={(event) => setLink(event.target.value)}
+                  value={link}
+                  type="url"
                   id="project-url"
                   name="link"
                   placeholder="Enter the public url of your project"
+                  required
                 />
               </div>
 
-              <button
-                type="submit"
-                className="mt-3 w-full rounded-lg bg-indigo-700 px-4 py-3 hover:bg-indigo-600 md:mt-6 md:w-auto"
-              >
-                Submit your project →
-              </button>
+              {showVisualFeedback ? (
+                <Button className="mt-3 flex w-full cursor-default items-center gap-2 rounded-lg bg-green-700 px-4 py-6 hover:bg-green-700 md:mt-6 md:w-auto">
+                  Submitted! 🎉
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="mt-3 flex w-full items-center gap-2 rounded-lg bg-indigo-700 px-4 py-6 hover:bg-indigo-600 md:mt-6 md:w-auto"
+                >
+                  {isSubmitting && <ReloadIcon className="animate-spin" />}
+                  {isSubmitting ? "Submitting" : "Submit your project →"}
+                </Button>
+              )}
             </div>
           </form>
         </div>
