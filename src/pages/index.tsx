@@ -166,12 +166,14 @@ export default function Home({ apps = [] }) {
               </div>
 
               {showVisualFeedback ? (
-                <Button className="mt-3 flex w-full cursor-default items-center gap-2 rounded-lg bg-green-700 px-4 py-6 hover:bg-green-700 md:mt-6 md:w-auto">
+                <Button
+                  type="button"
+                  className="mt-3 flex w-full cursor-default items-center gap-2 rounded-lg bg-green-700 px-4 py-6 hover:bg-green-700 md:mt-6 md:w-auto"
+                >
                   Submitted! 🎉
                 </Button>
               ) : (
                 <Button
-                  type="submit"
                   disabled={isSubmitting}
                   className="mt-3 flex w-full items-center gap-2 rounded-lg bg-indigo-700 px-4 py-6 hover:bg-indigo-600 md:mt-6 md:w-auto"
                 >
