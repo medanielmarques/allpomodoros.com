@@ -60,12 +60,8 @@ export default function Home({ apps = [] }) {
     const formData = new FormData(event.currentTarget)
     await fetch("/api/submit-app", {
       method: "POST",
-      body: formData,
+      body: JSON.stringify(Object.fromEntries(formData.entries())),
     })
-
-    console.log(formData.get("email"))
-    console.log(formData.get("twitter"))
-    console.log(formData.get("projectUrl "))
   }
 
   return (
@@ -118,7 +114,12 @@ export default function Home({ apps = [] }) {
 
                 <div className="items-center gap-1.5">
                   <Label htmlFor="twitter">Your twitter</Label>
-                  <Input type="text" id="twitter" placeholder="@johndoe" />
+                  <Input
+                    type="text"
+                    id="twitter"
+                    name="twitter"
+                    placeholder="@johndoe"
+                  />
                 </div>
               </div>
 
@@ -129,6 +130,7 @@ export default function Home({ apps = [] }) {
                 <Input
                   type="text"
                   id="project-url"
+                  name="link"
                   placeholder="Enter the public url of your project"
                 />
               </div>
