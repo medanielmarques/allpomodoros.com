@@ -109,9 +109,14 @@ export default function Home({ apps = [] }) {
           <p>All Pomodoros</p>
         </div>
 
-        <div className="mx-auto w-1/2">
-          <p className="bg-gradient-to-b from-neutral-400 to-neutral-500 bg-clip-text py-8 text-center text-4xl font-bold sm:text-5xl">
+        <div className="mx-auto flex w-3/4 flex-col gap-8 md:w-1/2">
+          <p className="bg-gradient-to-b from-neutral-400 to-neutral-500 bg-clip-text text-center text-4xl font-bold md:text-5xl">
             All Best Pomodoro Timer Apps
+          </p>
+
+          <p className="text-center text-lg text-gray-300 md:text-xl">
+            Find the best Pomodoro apps to help you focus and be more
+            productive.
           </p>
         </div>
 
