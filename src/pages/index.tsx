@@ -42,12 +42,28 @@ export const getServerSideProps = async () => {
       return response.json()
     })
     .then(async (data) => {
-      return data.results.map((app) => ({
-        name: app.properties.name.title[0].text.content as string,
-        link: app.properties.link.rich_text[0].plain_text as string,
-        description: app.properties.description.rich_text[0]
-          .plain_text as string,
-      })) as PomodoroApp[]
+      return data.results
+        .filter((app) => {
+          const name = app.properties?.name?.title[0]?.text?.content
+          const link = app.properties?.link?.rich_text[0]?.plain_text
+          const description =
+            app.properties?.description?.rich_text[0]?.plain_text
+
+          return (
+            name !== "" &&
+            link !== "" &&
+            description !== "" &&
+            name !== undefined &&
+            link !== undefined &&
+            description !== undefined
+          )
+        })
+        .map((app) => ({
+          name: app.properties.name.title[0].text.content as string,
+          link: app.properties.link.rich_text[0].plain_text as string,
+          description: app.properties.description.rich_text[0]
+            .plain_text as string,
+        })) as PomodoroApp[]
     })
     .catch((error) => {
       console.error("There was a problem with your fetch operation:", error)
